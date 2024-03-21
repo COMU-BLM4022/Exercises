@@ -23,7 +23,13 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
 # havaK <- <kodu tamamla>
-```
+library(readxl)
+havaK <- read_excel("veri.xlsx")
+head(havaK)
+```  
+
+
+
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
@@ -42,3 +48,4 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 # havaK <- <kodu tamamla>
 
 ```
+
