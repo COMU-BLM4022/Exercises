@@ -44,8 +44,14 @@ head(havaK)
 # havaK <- <kodu tamamla>
 ilk_sutun <- havaK[, 1]
 havaK <- havaK[, -1]
-print(havaK)
+#print(havaK)
 havaK[havaK == "-"] <- NA
+# Virgül ile ayrılmış sayıları içeren sütunlardaki virgül karakterlerini nokta ile değiştirme
+havaK <- as.data.frame(lapply(havaK, function(x) gsub(",", ".", x)))
+#print(havaK)
+# Kalan sütunları numeric türe dönüştürme
+havaK <- as.data.frame(lapply(havaK, as.numeric))
+tail(havaK)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
