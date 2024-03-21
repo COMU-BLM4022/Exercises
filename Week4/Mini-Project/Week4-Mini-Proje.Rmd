@@ -42,7 +42,10 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
-havak<- sapply(havaK,as.numeric)
+ilk_sutun <- havaK[, 1]
+havaK <- havaK[, -1]
+print(havaK)
+havaK[havaK == "-"] <- NA
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -51,8 +54,8 @@ havak<- sapply(havaK,as.numeric)
 
 ```{r}
 # havaK <- <kodu tamamla>
-print (colSums(is.na(havaK)))
 
+havak<- sapply(havaK,as.numeric)
 ```
 
 
