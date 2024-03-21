@@ -38,20 +38,25 @@ head(havaK)
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+*havaK* adlı değişkendeki bütün verilerin **numeric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
 
 ```{r}
 # havaK <- <kodu tamamla>
-ilk_sutun <- havaK[, 1]
-havaK <- havaK[, -1]
-#print(havaK)
-havaK[havaK == "-"] <- NA
-# Virgül ile ayrılmış sayıları içeren sütunlardaki virgül karakterlerini nokta ile değiştirme
-havaK <- as.data.frame(lapply(havaK, function(x) gsub(",", ".", x)))
-#print(havaK)
-# Kalan sütunları numeric türe dönüştürme
-havaK <- as.data.frame(lapply(havaK, as.numeric))
-tail(havaK)
+#ilk_sutun <- havaK[, 1]
+#havaK <- havaK[, -1]
+##print(havaK)
+#havaK[havaK == "-"] <- NA
+## Virgül ile ayrılmış sayıları içeren sütunlardaki virgül karakterlerini nokta ile değiştirme
+#havaK <- as.data.frame(lapply(havaK, function(x) gsub(",", ".", x)))
+##print(havaK)
+## Kalan sütunları numeric türe dönüştürme
+#havaK <- as.data.frame(lapply(havaK, as.numeric))
+#tail(havaK)
+##nümerik yapma ilk sütunu
+#ilk_sutun<- sapply(ilk_sutun,as.numeric)
+##print(ilk_sutun)
+#havaK <- cbind(ilk_sutun, havaK)
+
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -61,7 +66,7 @@ tail(havaK)
 ```{r}
 # havaK <- <kodu tamamla>
 
-havak<- sapply(havaK,as.numeric)
+
 ```
 
 
