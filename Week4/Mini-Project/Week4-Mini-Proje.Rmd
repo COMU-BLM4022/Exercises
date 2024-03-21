@@ -23,8 +23,13 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
 # havaK <- <kodu tamamla>
+
+# readxl paketini yükle
 library(readxl)
+# Excel dosyasını DataFrame'e dönüştür
 havaK <- read_excel("veri.xlsx")
+
+# DataFrame'i kontrol et
 head(havaK)
 ```  
 
@@ -37,7 +42,7 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
-
+havak<- sapply(havaK,as.numeric)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -46,6 +51,8 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
+print (colSums(is.na(havaK)))
 
 ```
+
 
