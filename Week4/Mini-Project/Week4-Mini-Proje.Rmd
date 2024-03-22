@@ -25,7 +25,7 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 # havaK <- <kodu tamamla>
 
 library(readxl)
-havaK<-read_excel("veri.xlsx")
+havaK<-read_excel("veriCank.xlsx")
 head(havaK)
 ```
 
@@ -36,6 +36,19 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
+ilk_sutun <- havaK[, 1]
+havaK <- havaK[, -1]
+havaK[havaK == "-"] <- NA
+havaK <- as.data.frame(lapply(havaK, function(x) gsub(",", ".", x)))
+# Kalan sütunları numeric türe dönüştürme
+havaK <- as.data.frame(lapply(havaK, as.numeric))
+#print(havaK)
+# Veri çerçevelerini birleştirme
+havaK <- cbind(ilk_sutun, havaK)
+#print(havaK)
+library(openxlsx)
+# havaK veri çerçevesini Excel dosyası olarak kaydetme
+write.xlsx(havaK, "havaK.xlsx", rowNames = FALSE)
 
 ```
 
@@ -45,5 +58,8 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
-
+library(dygraphs)
+# havaK veri seti ile bir dygraph oluşturma
+dygraph(havaK, main = "Hava Verileri") %>%
+  dyRangeSelector(dateWindow = c("2024-01-01", "2024-02-11"))
 ```
