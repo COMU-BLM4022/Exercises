@@ -67,7 +67,6 @@ head(havaK)
 #havaK <- cbind(ilk_sutun, havaK)
 #head(havaK)
 
-
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -76,7 +75,13 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
+# dygraphs paketini yükleyelim (varsayılan olarak yüklü gelmez)
+#install.packages("dygraphs")
+library(dygraphs)
 
+# havaK veri seti ile bir dygraph oluşturma
+dygraph(havaK, main = "Hava Verileri") %>%
+  dyRangeSelector(dateWindow = c("2024-01-01", "2024-02-11"))
 
 
 ```
