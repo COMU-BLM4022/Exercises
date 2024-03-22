@@ -23,12 +23,6 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-options(repos = c(CRAN = "https://cloud.r-project.org/"))
-install.packages("readxl")
-install.packages("dygraphs")
-install.packages("zoo")
-library(zoo)
-library(dygraphs)
 library(readxl)
 havaK <- read_excel("IzmirOcakHava.xlsx")
 ```
@@ -55,6 +49,8 @@ havaK
 
 ```{r}
 # NA değerleri mean ile doldurup grafik çıkartma
+library(dygraphs)
+
 fill_na_with_mean <- function(column) {
     column[is.na(column)] <- mean(column, na.rm = TRUE)
     return(column)
@@ -68,6 +64,8 @@ graph <- dygraph(havaK_filled_mean, main = "Hava Kalitesi (Mean)") %>%
 graph
 
 # NA değerleri interpolation ile doldurup grafik çıkartma
+library(zoo) #interpolation işlemi için
+
 havaK_filled_inter <- havaK
 havaK_filled_inter[,-1] <- na.approx(havaK[,-1])
 graph <- dygraph(havaK_filled_inter, main = "Hava Kalitesi (Interpolation)") %>%
