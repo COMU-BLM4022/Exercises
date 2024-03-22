@@ -27,7 +27,7 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 # readxl paketini yükle
 library(readxl)
 # Excel dosyasını DataFrame'e dönüştür
-havaK <- read_excel("veri.xlsx")
+havaK <- read_excel("VeriCank.xlsx")
 
 # DataFrame'i kontrol et
 head(havaK)
@@ -41,21 +41,32 @@ head(havaK)
 *havaK* adlı değişkendeki bütün verilerin **numeric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
 
 ```{r}
-# havaK <- <kodu tamamla>
+####ADIM 1
 #ilk_sutun <- havaK[, 1]
 #havaK <- havaK[, -1]
-##print(havaK)
+#head(havaK)
+
+####ADIM 2
 #havaK[havaK == "-"] <- NA
+
+####ADIM 3
 ## Virgül ile ayrılmış sayıları içeren sütunlardaki virgül karakterlerini nokta ile değiştirme
 #havaK <- as.data.frame(lapply(havaK, function(x) gsub(",", ".", x)))
-##print(havaK)
 ## Kalan sütunları numeric türe dönüştürme
 #havaK <- as.data.frame(lapply(havaK, as.numeric))
-#tail(havaK)
+#head(havaK)
+
+####ADIM 4
 ##nümerik yapma ilk sütunu
 #ilk_sutun<- sapply(ilk_sutun,as.numeric)
-##print(ilk_sutun)
+#head(ilk_sutun)
+
+
+#ilk sütün ile birleştirme
+
 #havaK <- cbind(ilk_sutun, havaK)
+#head(havaK)
+
 
 ```
 
