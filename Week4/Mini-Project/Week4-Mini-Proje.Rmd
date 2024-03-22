@@ -56,7 +56,7 @@ head(havaK)
 #havaK <- as.data.frame(lapply(havaK, as.numeric))
 #head(havaK)
 
-####ADIM 4
+####ADIM 4(opsiyonel:)) 
 ##nümerik yapma ilk sütunu
 #ilk_sutun<- sapply(ilk_sutun,as.numeric)
 #head(ilk_sutun)
@@ -76,6 +76,7 @@ head(havaK)
 
 ```{r}
 # havaK <- <kodu tamamla>
+
 
 
 ```
