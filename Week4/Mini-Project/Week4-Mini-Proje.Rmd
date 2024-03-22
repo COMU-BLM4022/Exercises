@@ -59,7 +59,6 @@ havaK_filled_mean <- havaK
 havaK_filled_mean[,-1] <- sapply(havaK[,-1], fill_na_with_mean)
 graph <- dygraph(havaK_filled_mean, main = "Hava Kalitesi (Mean)") %>%
  dyOptions(colors = c("blue", "red", "green", "orange", "purple", "brown")) %>%
- dyOptions(stackedGraph = FALSE) %>%
  dyRangeSelector()
 graph
 
@@ -70,7 +69,6 @@ havaK_filled_inter <- havaK
 havaK_filled_inter[,-1] <- na.approx(havaK[,-1])
 graph <- dygraph(havaK_filled_inter, main = "Hava Kalitesi (Interpolation)") %>%
  dyOptions(colors = c("blue", "red", "green", "orange", "purple", "brown")) %>%
- dyOptions(stackedGraph = FALSE) %>%
  dyRangeSelector()
 graph
 
