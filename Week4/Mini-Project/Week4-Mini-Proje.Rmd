@@ -1,6 +1,9 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelinde yaptığı hava kalitesi
@@ -20,7 +23,14 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+install.packages("readxl")
+install.packages("dygraphs")
+install.packages("zoo")
+library(zoo)
+library(dygraphs)
+library(readxl)
+havaK <- read_excel("IzmirOcakHava.xlsx")
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -28,7 +38,14 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 *havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
 
 ```{r}
-# havaK <- <kodu tamamla>
+havaK
+havaK[, -1][havaK[,-1] == "-"] <- NA
+havaK[,-1] <- sapply(havaK[,-1], function(x) {
+    x <- gsub("\\.", "", x)
+    x <- gsub(",", ".", x)
+    as.numeric(x)
+})
+havaK
 
 ```
 
@@ -37,6 +54,26 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 *havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
 
 ```{r}
-# havaK <- <kodu tamamla>
+# NA değerleri mean ile doldurup grafik çıkartma
+fill_na_with_mean <- function(column) {
+    column[is.na(column)] <- mean(column, na.rm = TRUE)
+    return(column)
+}
+havaK_filled_mean <- havaK
+havaK_filled_mean[,-1] <- sapply(havaK[,-1], fill_na_with_mean)
+graph <- dygraph(havaK_filled_mean, main = "Hava Kalitesi (Mean)") %>%
+ dyOptions(colors = c("blue", "red", "green", "orange", "purple", "brown")) %>%
+ dyOptions(stackedGraph = FALSE) %>%
+ dyRangeSelector()
+graph
+
+# NA değerleri interpolation ile doldurup grafik çıkartma
+havaK_filled_inter <- havaK
+havaK_filled_inter[,-1] <- na.approx(havaK[,-1])
+graph <- dygraph(havaK_filled_inter, main = "Hava Kalitesi (Interpolation)") %>%
+ dyOptions(colors = c("blue", "red", "green", "orange", "purple", "brown")) %>%
+ dyOptions(stackedGraph = FALSE) %>%
+ dyRangeSelector()
+graph
 
 ```
