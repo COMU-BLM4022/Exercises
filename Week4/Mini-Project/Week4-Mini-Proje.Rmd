@@ -25,6 +25,14 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
 # havaK <- <kodu tamamla>
+
+# readxl paketini yükle
+library(readxl)
+# Excel dosyasını DataFrame'e dönüştür
+havaK <- read_excel("VeriCank.xlsx")
+
+# DataFrame'i kontrol et
+head(havaK)
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -33,6 +41,20 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 #  <kodu tamamla>
+#ilk_sutun <- havaK[, 1]
+# havaK <- havaK[, -1]
+# head(havaK)
+
+# havaK[havaK == "-"] <- NA
+
+## Virgül ile ayrılmış sayıları içeren sütunlardaki virgül karakterlerini nokta ile değiştirme
+# havaK <- as.data.frame(lapply(havaK, function(x) gsub(",", ".", x)))
+## Kalan sütunları numeric türe dönüştürme
+# havaK <- as.data.frame(lapply(havaK, as.numeric))
+# head(havaK)
+
+# havaK <- cbind(ilk_sutun, havaK)
+# head(havaK)
 ```
 
 
@@ -57,4 +79,6 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 library(dygraphs)
 #  <kodu tamamla>
+dygraph(havaK, main = "Hava Verileri") %>%
+  dyRangeSelector(dateWindow = c("2024-01-01", "2024-02-11"))
 ```
