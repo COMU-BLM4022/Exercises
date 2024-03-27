@@ -27,6 +27,8 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 # havaK <- <kodu tamamla>
 ```
 
+havaK <- read_excel("Veri Detayları21.03.2024 16_33_51.xlsx")
+
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
 ### Zaman sütunu
@@ -34,7 +36,6 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 #  <kodu tamamla>
 ```
-
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
@@ -48,6 +49,17 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 # <kodu tamamla>
 ```
 
+tarih_column <- havaK$Tarih
+havaK$Tarih <- NULL
+havaK <- as.data.frame(sapply(havaK, function(x) as.numeric(ifelse(x == "-", NA, gsub(",", ".", x)))))
+havaK$Tarih <- tarih_column
+colnames(havaK)[colnames(havaK) == "Tarih"] <- "Time"
+havaK$Time <- as.POSIXct(havaK$Time, format = "%d.%m.%Y %H:%M:%S")
+View(havaK)
+head(havaK, 10)
+
+
+
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
@@ -58,3 +70,26 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 library(dygraphs)
 #  <kodu tamamla>
 ```
+
+library(dygraphs)
+havaK <- data.frame(
+  Time = as.POSIXct(havaK$Time, format = "%Y-%m-%d %H:%M:%S"),
+  PM10 = as.numeric(havaK$`İstanbul - Arnavutköy`),
+  PM25 = as.numeric(havaK$...3),
+  SO2 = as.numeric(havaK$...4),
+  CO = as.numeric(havaK$...5),
+  NO2 = as.numeric(havaK$...6),
+  NOX = as.numeric(havaK$...7),
+  NO = as.numeric(havaK$...8)
+)
+havaK <- data.frame(Time = havaK$Time, PM10 = havaK$`PM10`, SO2 = havaK$`SO2`)
+havaK <- havaK[complete.cases(havaK$Time), ]
+rownames(havaK) <- havaK$Time
+havaK$Time <- NULL
+
+
+dygraph(havaK) %>%
+  dyAxis("y", label = "PM10", gridLineWidth = 0.1) %>%
+  dyAxis("y2", label = "SO2", gridLineWidth = 0.1) %>%
+  dySeries("PM10", label = "PM10") %>%
+  dySeries("SO2", label = "SO2", axis = "y2")
