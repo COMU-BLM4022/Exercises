@@ -1,6 +1,8 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Hava Kalitesi Veri Analizi"
+output:
+  html_document:
+    df_print: paged
 ---
 
 T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelinde yaptığı hava kalitesi
@@ -8,35 +10,68 @@ T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelind
 
 Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew) adresinden *Excel* formatında indirlebilmektedir. 
 
-## Egzersiz 1 - Veri ithali
+## Veri ithali
 
-**Doğduğunuz şehre** ait olan **saatlik** hava kalitesi parametrelerini *Excel* formatında **doğduğunuz ay** için indirin. Tam bir aylık veri indirmeniz gerekmektedir.
+İstanbul Arnavutköy'e ait olan saatlik hava kalitesi parametrelerini Excel formatında eylül ayı için indirdim.
 
-Örnek :
-
-- Mart ayında doğduysanız Mart 2023 verisi (Çünkü Mart 2024 bitmedi)
-- Aralık ayında doğduysanız Aralık 2023 verisi
-- Şubat ayında doğduysanız Şubat 2024 verisi
-
-```{r}
-# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+```{r warning=FALSE}
+library(readxl)
+havaK <- readxl::read_excel("Veri Detayları27.03.2024 18_44_04.xlsx", skip = 1, col_names = c("Tarih", "istanbul-Arnavutköy", "PM2.5", "SO2", "CO","NO2","NOX","NO","O3"))
+head(havaK, 10)
 ```
 
-## Egzersiz 2 - Veri Kalite Kontrolü
+## Veri Kalite Kontrolü
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+### Zaman sütunu
+Zaman değerlerini içeren sütunun isminin **Time** olması
+```{r}
+# tarih sütunun adını time olarak değiştirme 
+names(havaK)[1] <- "Time"
+```
+
+
+*havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağladım 
 
 ```{r}
-# havaK <- <kodu tamamla>
+# havaK$Time sütununu POSIXct türüne dönüştürme
+havaK$Time <- as.POSIXct(havaK$Time)
+```
 
+*Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağladım.
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+
+# Tüm sütunların tipini numeric yapma (ilk sütun hariç)
+havaK <- havaK %>%
+  mutate(across(-1, ~as.numeric(gsub(",", ".", .))))
+# İlk satırı çıkartma
+havaK <- havaK[-1, ]
+head(havaK, 10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+Dygraphs paketini kullanarak PM2.5 ve NOX değerlerinin zaman serisi grafiğini oluşturdum.
 
-```{r}
-# havaK <- <kodu tamamla>
 
+
+
+```{r warning=FALSE}
+# dygraphs paketini yükleyin
+library(dygraphs)
+
+# Hava kalitesi verilerini zaman serisi nesneye dönüştürme
+havaK_ts <- xts::xts(havaK[, -1], order.by = havaK$Time)
+
+# İki farklı parametre için ayrı ayrı zaman serileri oluşturma
+pm25 <- havaK_ts$PM2.5
+nox <- havaK_ts$NOX
+
+# dygraph grafiğini oluşturma
+dygraph(cbind(pm25, nox), main = "PM2.5 ve NOX Değerlerinin Zaman Serisi Grafiği") %>%
+  dyAxis("y", label = "PM2.5", axisLabelColor = "blue") %>%
+  dyAxis("y2", label = "NOX", axisLabelColor = "red") %>%
+  dyOptions(colors = c("blue", "red")) %>%
+  dySeries("NOX", axis = "y2")
 ```
