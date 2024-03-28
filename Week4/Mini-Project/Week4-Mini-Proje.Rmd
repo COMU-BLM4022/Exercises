@@ -24,7 +24,9 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+library(readxl)
+havaK <- as.data.frame(readxl::read_excel("C:/Users/Casper/Downloads/ist.xlsx",skip=1))
+havaK
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -32,29 +34,48 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-#  <kodu tamamla>
+# zaman sütununun adını Time olarak değiştir
+colnames(havaK)[1] <- "Time"
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# <kodu tamamla>
+# Time sütununu POSIXct türüne dönüştür
+havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d")
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# <kodu tamamla>
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+  # Sayısal olmayan karakterleri ve boşlukları temizle  
+  x <- gsub("[^0-9,]", "", x)
+  # Ondalık ayırıcıları noktaya çevir
+  #- olanları boş yapalım ki NA çevrilsin
+  x <- gsub("-", "", x)
+  x <- gsub(",", ".", x)  
+  # Sayısal değerlere dönüştür
+  as.numeric(x)})
+head(havaK, 10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
-![](graphic_example.png "İki akslı grafik örneği")
-
 
 ```{r}
 library(dygraphs)
-#  <kodu tamamla>
+# Dygraph çizimi
+graph <- dygraph(hava_grafik, main = "İSTANBUL - ŞİRİNEVLER Hava Kalitesi") %>%
+  dySeries("NO", label = "NO ( ug/m3 )", axis = "y") %>%
+  dyOptions(drawPoints = TRUE, pointSize = 2) %>%
+  dyAxis("y", label = "NO ( ug/m3 )", valueRange = c(0, max(hava_grafik$NO) * 1.1)) %>%
+  dySeries("NO2", label = "NO2 ( ug/m3 )", axis = "y2") %>%
+  dyAxis("y2", label = "NO2 ( ug/m3 )", independentTicks = TRUE, valueRange = c(0, max(hava_grafik$NO2) * 1.1)) %>%
+  dyOptions(colors = RColorBrewer::brewer.pal(3, "Set1"))
+
+# Grafiği göster
+graph
 ```
