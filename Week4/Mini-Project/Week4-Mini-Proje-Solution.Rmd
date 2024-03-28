@@ -1,0 +1,97 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelinde yaptığı hava kalitesi
+ölçümleri [https://sim.csb.gov.tr/Services/AirQuality](https://sim.csb.gov.tr/Services/AirQuality) adresinde bulunan web uygulamasında istasyon bazında görsellenebilmektedir. 
+
+Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew) adresinden *Excel* formatında indirlebilmektedir. 
+
+## Egzersiz 1 - Veri ithali
+
+**Doğduğunuz şehre** ait olan **saatlik** hava kalitesi parametrelerini *Excel* formatında **doğduğunuz ay** için indirin. Tam bir aylık veri indirmeniz gerekmektedir.
+
+Örnek :
+
+- Mart ayında doğduysanız Mart 2023 verisi (Çünkü Mart 2024 bitmedi)
+- Aralık ayında doğduysanız Aralık 2023 verisi
+- Şubat ayında doğduysanız Şubat 2024 verisi
+
+Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir.
+*havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+
+```{r}
+# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
+library(readxl)
+havaK <- readxl::read_xlsx("Veri Detayları3_21_2024, 1_56_44 PM.xlsx", skip = 1)
+print(havaK)
+```
+
+```{r}
+library(testthat)
+testthat::test_that("Global Workspace'de 'havaK' adli bir değişken olmalı", {
+  expect_true(exists("havaK"))
+})
+
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("data.frame" %in% class(havaK))
+})
+```
+
+## Egzersiz 2 - Veri Kalite Kontrolü
+
+### Zaman sütunu
+Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
+```{r}
+colnames(havaK)[1] <- "Time"
+```
+
+
+*havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
+
+```{r}
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("POSIXct" %in% class(havaK$Time))
+})  
+
+#dput(colnames(havaK), file = ".colnames")
+true_colnames <- dget(file = ".colnames")
+test_that("data.frame dolumn names should be right", {
+  expect_equal(colnames(havaK), true_colnames)
+})
+```
+
+*Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın.
+
+```{r}
+t <- sapply(2:ncol(havaK), function(x) {
+  # Convert "," to "."
+  havaK[[x]] <<- gsub(",", ".", havaK[[x]])
+  # Cast to 'numeric
+  havaK[[x]] <<- as.numeric(havaK[[x]])
+})
+```
+
+```{r}
+test_that("data.frame dolumns other than 'Time' should be of type 'numeric'", {
+  expect_true(all(sapply(2:ncol(havaK), function(x) class(havaK[[x]])) == "numeric"))
+})
+
+```
+
+```{r}
+print(havaK)
+```
+## Egzersiz 3 - Veri Görselleme
+*dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
+
+![örnek grafik](graphic_example.png "İki akslı grafik örneği")
+
+
+```{r}
+library(dygraphs)
+#  <kodu tamamla>
+```
