@@ -27,9 +27,6 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 library(readxl)
 library(dplyr)
 
-# hocam şöyle bir problemle karşılaştım. önce 1 numaralı satırı ekledikten sonra excel verisinin yanına  na = "-" eklersem kod çalışıyor ama önce na yı eklersem çalışmıyor ve çözemedim
-
-# data frame çevir ve toplu bir numeric yap
 havaK <- as.data.frame(readxl::read_excel("kahramanmaras_veri.xlsx"))
 ```
 
@@ -39,7 +36,6 @@ havaK <- as.data.frame(readxl::read_excel("kahramanmaras_veri.xlsx"))
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-# zaman sütununun adını Time olarak değiştir
 colnames(havaK)[colnames(havaK) == "Tarih"] <- "Time"
 ```
 
@@ -48,7 +44,6 @@ colnames(havaK)[colnames(havaK) == "Tarih"] <- "Time"
 
 ```{r}
 
-# Time sütununu POSIXct türüne dönüştür
 havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d")
 ```
 
@@ -59,7 +54,6 @@ havaK[, -1] <- lapply(havaK[, -1], function(x) gsub(",", ".", x))
 havaK[, -1] <-(lapply(havaK[, -1], as.numeric))
 
 havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d")
-# İlk 10 satırı göster
 print(head(havaK, 10))
 ```
 
@@ -72,19 +66,13 @@ print(head(havaK, 10))
 ```{r}
 library(dygraphs)
 
-# Veri setini düzenle
-havaK <- havaK[-1, ]  # İlk satır başlık olduğu için kaldır
-
-# Sütun adlarını güncelle
+havaK <- havaK[-1, ]  
 names(havaK) <- c("Time", "PM10", "SO2", "NO2", "NOX", "NO", "O3")
 
-# Karakter sütunları sayısal değerlere dönüştür
 havaK[, -1] <- lapply(havaK[, -1], function(x) as.numeric(gsub(",", ".", x)))
 
-# PM10 ve SO2 sütunlarını seç
 havaKGraph <- havaK[, c("Time", "PM10", "SO2")]
 
-# Dygraph çizimi
 graph <- dygraph(havaKGraph, main = "KAHRAMANMARAŞ HAVA KALİTE RAPORU(PM10-SO2)") %>%
   dySeries("PM10", label = "PM10 (\u03bcg/m3)", axis = "y") %>%
   dyOptions(drawPoints = TRUE, pointSize = 10) %>%
@@ -93,7 +81,6 @@ graph <- dygraph(havaKGraph, main = "KAHRAMANMARAŞ HAVA KALİTE RAPORU(PM10-SO2
   dyAxis("y2", label = "SO2 ( µg/m3 )", independentTicks = TRUE, valueRange = c(0, max(havaKGraph$SO2) * 1.1)) %>%
   dyOptions(colors = RColorBrewer::brewer.pal(2, "Set1"))
 
-# Grafiği göster
 graph
 
 
