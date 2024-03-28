@@ -28,6 +28,7 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 library(readxl)
 # Excel dosyasını DataFrame'e dönüştür
 havaK <- read_excel("VeriCank.xlsx")
+colnames(havaK)[1] <- "Time"
 
 # DataFrame'i kontrol et
 head(havaK)
