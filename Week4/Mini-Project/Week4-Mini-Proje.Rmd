@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelinde yaptığı hava kalitesi
@@ -18,25 +20,84 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 - Aralık ayında doğduysanız Aralık 2023 verisi
 - Şubat ayında doğduysanız Şubat 2024 verisi
 
+Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+library(readxl)
+library(dplyr)
+
+# hocam şöyle bir problemle karşılaştım. önce 1 numaralı satırı ekledikten sonra excel verisinin yanına  na = "-" eklersem kod çalışıyor ama önce na yı eklersem çalışmıyor ve çözemedim
+#havaK <- readxl::read_excel("C:/Users/omerli/Desktop/rödev/manisa-soma-veridetaylari.xlsx", na = "-")
+
+# data frame çevir ve toplu bir numeric yap
+havaK <- as.data.frame(readxl::read_excel("kahramanmaras_veri.xlsx"))
 ```
+
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+### Zaman sütunu
+Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
+```{r}
+# zaman sütununun adını Time olarak değiştir
+colnames(havaK)[colnames(havaK) == "Tarih"] <- "Time"
+```
+
+
+*havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# havaK <- <kodu tamamla>
 
+# Time sütununu POSIXct türüne dönüştür
+havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d")
+```
+
+*Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+
+```{r}
+havaK[, -1] <- lapply(havaK[, -1], function(x) gsub(",", ".", x))
+havaK[, -1] <-(lapply(havaK[, -1], as.numeric))
+
+havaK$Time <- as.POSIXct(havaK$Time, format = "%Y-%m-%d")
+# İlk 10 satırı göster
+print(head(havaK, 10))
 ```
 
 ## Egzersiz 3 - Veri Görselleme
+*dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+![](graphic_example.png "İki akslı grafik örneği")
+
 
 ```{r}
-# havaK <- <kodu tamamla>
+library(dygraphs)
+
+# Veri setini düzenle
+havaK <- havaK[-1, ]  # İlk satır başlık olduğu için kaldır
+
+# Sütun adlarını güncelle
+names(havaK) <- c("Time", "PM10", "SO2", "NO2", "NOX", "NO", "O3")
+
+# Karakter sütunları sayısal değerlere dönüştür
+havaK[, -1] <- lapply(havaK[, -1], function(x) as.numeric(gsub(",", ".", x)))
+
+# PM10 ve SO2 sütunlarını seç
+havaKGraph <- havaK[, c("Time", "PM10", "SO2")]
+
+# Dygraph çizimi
+graph <- dygraph(havaKGraph, main = "KAHRAMANMARAŞ HAVA KALİTE RAPORU(PM10-SO2)") %>%
+  dySeries("PM10", label = "PM10 (\u03bcg/m3)", axis = "y") %>%
+  dyOptions(drawPoints = TRUE, pointSize = 10) %>%
+  dyAxis("y", label = "PM10 (\u03bcg/m3)", valueRange = c(0, max(havaKGraph$PM10) * 1.1)) %>%
+  dySeries("SO2", label = "SO2 ( µg/m3 )", axis = "y2") %>%
+  dyAxis("y2", label = "SO2 ( µg/m3 )", independentTicks = TRUE, valueRange = c(0, max(havaKGraph$SO2) * 1.1)) %>%
+  dyOptions(colors = RColorBrewer::brewer.pal(2, "Set1"))
+
+# Grafiği göster
+graph
+
+
 
 ```
+
