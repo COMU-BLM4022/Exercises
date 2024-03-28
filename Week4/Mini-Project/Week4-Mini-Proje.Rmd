@@ -28,7 +28,6 @@ library(readxl)
 library(dplyr)
 
 # hocam şöyle bir problemle karşılaştım. önce 1 numaralı satırı ekledikten sonra excel verisinin yanına  na = "-" eklersem kod çalışıyor ama önce na yı eklersem çalışmıyor ve çözemedim
-#havaK <- readxl::read_excel("C:/Users/omerli/Desktop/rödev/manisa-soma-veridetaylari.xlsx", na = "-")
 
 # data frame çevir ve toplu bir numeric yap
 havaK <- as.data.frame(readxl::read_excel("kahramanmaras_veri.xlsx"))
