@@ -50,9 +50,8 @@ havaK$Time <- as.POSIXct(havaK$Time)
 
 ```{r}
 # <kodu tamamla>
-havaK[, -1][havaK[,-1] == "-"] <- NA
 havaK[,-1] <- sapply(havaK[,-1], function(x) {
-    x <- gsub("\\.", "", x)
+    x <- gsub("[^0-9,]", "", x)
     x <- gsub(",", ".", x)
     as.numeric(x)
 })
@@ -66,10 +65,10 @@ head(havaK, 10)
 
 
 ```{r}
-library(dygraphs)
 #  <kodu tamamla>
 # NA değerleri mean ile doldurup grafik çıkartma
 library(dygraphs)
+library(xts)
 
 fill_na_with_mean <- function(column) {
     column[is.na(column)] <- mean(column, na.rm = TRUE)
@@ -78,12 +77,12 @@ fill_na_with_mean <- function(column) {
 havaK_filled_mean <- havaK
 havaK_filled_mean[,-1] <- sapply(havaK[,-1], fill_na_with_mean)
 
-seciliSutunlar_mean <- havaK_filled_mean[, c("Time", "NO ( µg/m3 )", "NO2 ( µg/m3 )")]
-graph <- dygraph(seciliSutunlar_mean, main = "Hava Kalitesi (Mean)") %>%
- dyOptions(colors = c("blue", "red")) %>%
- dyRangeSelector()
-
-graph
+havaK_xts_mean <- xts(havaK_filled_mean[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = havaK_filled_mean$Time)
+dygraph(havaK_xts_mean, main = "Hava Kalitesi (Mean)") %>%
+  dyOptions(colors = c("blue", "red")) %>%
+  dyAxis("y", label = "NO ( µg/m3 )") %>%
+  dyAxis("y2", label = "NO2 ( µg/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts_mean)[2], axis = 'y2')
 
 # NA değerleri interpolation ile doldurup grafik çıkartma
 library(zoo)
@@ -91,11 +90,11 @@ library(zoo)
 havaK_filled_inter <- havaK
 havaK_filled_inter[,-1] <- na.approx(havaK[,-1])
 
-seciliSutunlar_inter <- havaK_filled_inter[, c("Time", "NO ( µg/m3 )", "NO2 ( µg/m3 )")]
+havaK_xts_inter <- xts(havaK_filled_inter[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = havaK_filled_inter$Time)
 
-graph <- dygraph(seciliSutunlar_inter, main = "Hava Kalitesi (Interpolation)") %>%
+dygraph(havaK_xts_inter, main = "Hava Kalitesi (Interpolation)") %>%
   dyOptions(colors = c("blue", "red")) %>%
-  dyRangeSelector()
-
-graph
+  dyAxis("y", label = "NO ( µg/m3 )") %>%
+  dyAxis("y2", label = "NO2 ( µg/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts_inter)[2], axis = 'y2')
 ```
