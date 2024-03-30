@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Hava Kalitesi Veri Analizi"
 output:
   html_document:
     df_print: paged
@@ -10,51 +10,76 @@ T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelind
 
 Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew) adresinden *Excel* formatında indirlebilmektedir. 
 
-## Egzersiz 1 - Veri ithali
+## Veri ithali
 
-**Doğduğunuz şehre** ait olan **saatlik** hava kalitesi parametrelerini *Excel* formatında **doğduğunuz ay** için indirin. Tam bir aylık veri indirmeniz gerekmektedir.
+Istanbul Maslak'a ait olan saatlik hava kalitesi parametrelerini Excel formatında Şubat-Mart ayı için indirdim.
 
-Örnek :
-
-- Mart ayında doğduysanız Mart 2023 verisi (Çünkü Mart 2024 bitmedi)
-- Aralık ayında doğduysanız Aralık 2023 verisi
-- Şubat ayında doğduysanız Şubat 2024 verisi
-
-Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
-
-```{r}
-# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+```{r warning=FALSE}
+library(readxl)
+havaK <- readxl::read_excel("ornek_veri_1.xlsx", skip = 1, col_names = c("Tarih", "Istanbul Maslak", "PM2.5", "SO2", "CO","NO2","NOX","NO","O3"))
+head(havaK, 10)
 ```
 
-## Egzersiz 2 - Veri Kalite Kontrolü
+## Veri Kalite Kontrolü
 
 ### Zaman sütunu
-Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
+Zaman değerlerini içeren sütunun isminin **Time** olması
 ```{r}
-#  <kodu tamamla>
+# tarih sütunun adını time olarak değiştirme 
+names(havaK)[1] <- "Time"
 ```
 
 
-*havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
+*havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağladım 
 
 ```{r}
-# <kodu tamamla>
+# havaK$Time sütununu POSIXct türüne dönüştürme
+havaK$Time <- as.POSIXct(havaK$Time)
 ```
 
-*Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+*Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağladım.
 
-```{r}
-# <kodu tamamla>
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+
+# Tüm sütunların tipini numeric yapma (ilk sütun hariç)
+havaK <- havaK %>%
+  mutate(across(-1, ~as.numeric(gsub(",", ".", .))))
+# İlk satırı çıkartma
+havaK <- havaK[-1, ]
+head(havaK, 10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
-*dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
-![](graphic_example.png "İki akslı grafik örneği")
+Dygraphs paketini kullanarak NO2 ve SO2 değerlerinin zaman serisi grafiğini oluşturdum.
 
 
-```{r}
+
+
+```{r warning=FALSE}
+# dygraphs paketini yükleyin
 library(dygraphs)
-#  <kodu tamamla>
+
+# Tarih sütununun adını "time" olarak değiştirme
+names(havaK)[names(havaK) == "Tarih"] <- "Time"
+
+# Tarih sütununu uygun bir formata dönüştürme
+havaK$Time <- as.POSIXct(havaK$Time, format = "%d.%m.%Y %H:%M:%S")
+
+# 'xts' nesnesini oluşturma
+havaK_ts <- xts::xts(havaK[, -1], order.by = havaK$Time)
+
+# İki farklı parametre için ayrı ayrı zaman serileri oluşturma
+no2_obj <- havaK_ts$NO2
+so2_obj <- havaK_ts$SO2
+
+# dygraph grafiğini oluşturma
+dygraph(cbind(no2_obj, so2_obj), main = "NO2 ve SO2 Degerlerinin Zaman Serisi Grafiği") %>%
+  dyAxis("y", label = "NO2", axisLabelColor = "blue") %>%
+  dyAxis("y2", label = "SO2", axisLabelColor = "red") %>%
+  dyOptions(colors = c("blue", "red")) %>%
+  dySeries("SO2", axis = "y2")
+
+
 ```
