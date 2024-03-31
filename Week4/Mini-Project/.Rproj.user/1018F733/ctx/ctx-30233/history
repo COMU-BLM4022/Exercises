@@ -1,0 +1,388 @@
+# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
+# havaK <- <kodu tamamla>
+#  <kodu tamamla>
+library(dygraphs)
+install.packages("dygraphs")
+library(dygraphs)
+install.packages("readxl")
+library(readxl)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları28.03.2024 15_11_29.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("D:\sytem\indirilenler\Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+Veri_Detaylari31_03_2024_17_08_59 <- read_excel("Veri Detaylari31.03.2024 17_08_59.xlsx")
+View(Veri_Detaylari31_03_2024_17_08_59)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detayları31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detaylari31.03.2024 17_08_59.xlsx",skip=1)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detaylari31.03.2024 17_08_59.xlsx",skip=1)
+print(havaK)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detaylari31.03.2024 17_08_59.xlsx",skip=1)
+colnames(havaK)[1] <- "Time"
+colnames(havaK)[1] <- "Time"
+print(havaK)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+print(havaK)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+print(havaK)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+print(havaK)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+x <- gsub(",", ".", x)
+x <- as.numeric(x)
+})
+print(havaK)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+x <- gsub(",", ".", x)
+x <- as.numeric(x)
+})
+print(x)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+x <- gsub(",", ".", x)
+x <- as.numeric(x)
+})
+print(havaK)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", " ", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", " ",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", "a",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", "7",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", "7",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[, -which(names(havaK) == "Time")] <- lapply(havaK[, -which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".",x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+# Sayısal olmayan karakterleri ve boşlukları temizle
+x <- gsub("[^0-9,]", "", x)
+# Ondalık ayırıcıları noktaya çevir
+x <- gsub(",", ".", x)
+# Sayısal değerlere dönüştür
+as.numeric(x)
+})
+head(havaK, 10)
+library(dplyr)
+install.packages("dplyr")
+library(dplyr)
+library(dplyr)
+havaK <- havaK %>%
+mutate(across(-1, ~as.numeric(gsub(",", ".", .))))
+havaK <- havaK[-1, ]
+head(havaK, 10)
+library(dplyr)
+havaK <- havaK %>%
+mutate(across(-1, ~as.numeric(gsub(",", ".", .))))
+havaK <- havaK[-1, ]
+head(havaK, 10)
+havaK_numeric[, -which(names(havaK) == "Time")] = lapply(havaK[, -which(names(havaK) == "Time")], function(x) as.numeric(gsub(",", ".", x)))
+library(dplyr)
+havaK <- havaK %>%
+mutate(across(-1, ~as.numeric(gsub(",", ".", .))))
+havaK <- havaK[-1, ]
+head(havaK, 10)
+library(readxl)
+havaK<-readxl::read_xlsx("Veri Detaylari31.03.2024 17_08_59.xlsx",skip=1)
+colnames(havaK)[1] <- "Time"
+print(havaK)
+library(dplyr)
+havaK <- havaK %>%
+mutate(across(-1, ~as.numeric(gsub(",", ".", .))))
+havaK <- havaK[-1, ]
+head(havaK, 10)
+install.packages("dygraphs")
+library(dygraphs)
+library(dygraphs)
+#  <kodu tamamla>
+library(dygraphs)
+havaK_xts <- xts(havaK[, c(2, 3)], order.by=havaK$Time)
+install.packages("xts")
+library(xts)
+library(dygraphs)
+havaK_xts <- xts(havaK[, c(2, 3)], order.by=havaK$Time)
+# Oluşturulan xts nesnesi için dygraph oluşturma
+dygraph(havaK_xts) %>%
+#Sırası ile renkler
+dyOptions(colors = c("blue", "red")) %>%
+#Sol
+dyAxis("y", label = "PM 2.5 ( µg/m3 )") %>%
+#Sağ
+dyAxis("y2", label = "SO2 ( µg/m3 )", independentTicks = TRUE) %>%
+dySeries(names(havaK_xts)[2], axis = 'y2')
+library(dygraphs)
+havaK_xts <- xts(havaK[, c(2, 3)], order.by=havaK$Time)
+# Oluşturulan xts nesnesi için dygraph oluşturma
+dygraph(havaK_xts) %>%
+#Sırası ile renkler
+dyOptions(colors = c("blue", "red")) %>%
+#Sol
+dyAxis("y", label = "PM 2.5 ( ug/m3 )") %>%
+#Sağ
+dyAxis("y2", label = "SO2 ( ug/m3 )", independentTicks = TRUE) %>%
+dySeries(names(havaK_xts)[2], axis = 'y2')
+print(havaK)
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "PM2.5", "SO2", "NO2", "NOX", "NO", "O3")
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "PM2.5")
+# Convert 'Time' column to POSIXct format
+havaK$Time <- as.POSIXct(havaK$Time)
+# Convert other columns to numeric, replacing commas with dots
+havaK[-1] <- lapply(havaK[-1], function(x) as.numeric(gsub(",", ".", x)))
+# Plot the data
+plot_ly(havaK, x = ~Time) %>%
+add_lines(y = ~PM10, name = "PM10 (µg/m³)", color = I("blue")) %>%
+add_lines(y = ~PM2.5, name = "PM2.5 (µg/m³)", color = I("red")) %>%
+layout(title = "PM10 and PM2.5 Values",
+xaxis = list(title = "Time"),
+yaxis = list(title = "Value (µg/m³)"))
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "SO2")
+# Convert 'Time' column to POSIXct format
+havaK$Time <- as.POSIXct(havaK$Time)
+# Convert other columns to numeric, replacing commas with dots
+havaK[-1] <- lapply(havaK[-1], function(x) as.numeric(gsub(",", ".", x)))
+# Plot the data
+plot_ly(havaK, x = ~Time) %>%
+add_lines(y = ~PM10, name = "PM10 (µg/m³)", color = I("blue")) %>%
+add_lines(y = ~PM2.5, name = "PM2.5 (µg/m³)", color = I("red")) %>%
+layout(title = "PM10 and PM2.5 Values",
+xaxis = list(title = "Time"),
+yaxis = list(title = "Value (µg/m³)"))
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "SO2")
+# Convert 'Time' column to POSIXct format
+havaK$Time <- as.POSIXct(havaK$Time)
+# Convert other columns to numeric, replacing commas with dots
+havaK[-1] <- lapply(havaK[-1], function(x) as.numeric(gsub(",", ".", x)))
+# Plot the data
+plot_ly(havaK, x = ~Time) %>%
+add_lines(y = ~PM10, name = "PM10 (ug/m³)", color = I("blue")) %>%
+add_lines(y = ~PM2.5, name = "SO2 (ug/m³)", color = I("red")) %>%
+layout(title = "PM10 and PM2.5 Values",
+xaxis = list(title = "Time"),
+yaxis = list(title = "Value (µg/m³)"))
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "SO2")
+# Convert 'Time' column to POSIXct format
+havaK$Time <- as.POSIXct(havaK$Time)
+# Convert other columns to numeric, replacing commas with dots
+havaK[-1] <- lapply(havaK[-1], function(x) as.numeric(gsub(",", ".", x)))
+# Plot the data
+plot_ly(havaK, x = ~Time) %>%
+add_lines(y = ~PM10, name = "PM10 (ug/m³)", color = I("blue")) %>%
+add_lines(y = ~PM2.5, name = "SO2 (ug/m³)", color = I("red")) %>%
+layout(title = "PM10 and PM2.5 Values",
+xaxis = list(title = "Time"),
+yaxis = list(title = "Value (µg/m³)"))
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "SO2")
+# Convert 'Time' column to POSIXct format
+havaK$Time <- as.POSIXct(havaK$Time)
+# Convert other columns to numeric, replacing commas with dots
+havaK[-1] <- lapply(havaK[-1], function(x) as.numeric(gsub(",", ".", x)))
+# Plot the data
+plot_ly(havaK, x = ~Time) %>%
+add_lines(y = ~PM10, name = "PM10 (ug/m³)", color = I("blue")) %>%
+add_lines(y = ~SO2, name = "SO2 (ug/m³)", color = I("red")) %>%
+layout(title = "PM10 and PM2.5 Values",
+xaxis = list(title = "Time"),
+yaxis = list(title = "Value (µg/m³)"))
+library(dygraphs)
+# Rename columns to remove special characters
+colnames(havaK) <- c("Time", "PM10", "SO2")
+# Convert 'Time' column to POSIXct format
+havaK$Time <- as.POSIXct(havaK$Time)
+# Convert other columns to numeric, replacing commas with dots
+havaK[-1] <- lapply(havaK[-1], function(x) as.numeric(gsub(",", ".", x)))
+# Plot the data
+plot_ly(havaK, x = ~Time) %>%
+add_lines(y = ~PM10, name = "PM10 (ug/m³)", color = I("blue")) %>%
+add_lines(y = ~SO2, name = "SO2 (ug/m³)", color = I("red")) %>%
+layout(title = "PM10 and PM2.5 Values",
+xaxis = list(title = "Time"),
+yaxis = list(title = "Value (ug/m³)"))
+install.packages("dygraphs")
+library(dygraphs)
+data_subset <- havaK[, c("Time", "SO2", "CO")]
