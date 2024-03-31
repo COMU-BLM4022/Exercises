@@ -1,0 +1,4 @@
+"0","colnames(havaK)[1] <- ""Time"""
+"0","colnames(havaK)[2] <- ""PM10"""
+"0","colnames(havaK)[3] <- ""SO2"""
+"0","print(havaK)"
