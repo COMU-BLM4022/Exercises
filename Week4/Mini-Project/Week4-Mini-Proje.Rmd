@@ -23,38 +23,72 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
+
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+
+library(readxl)
+
+havaK <- read_excel("Veri Detayları28.03.2024 00 37 24.xlsx")
+names(havaK)[-1] <- unlist(havaK[1,2:9 ])
+havaK <- havaK[-1, ] # İlk satırı sildik
+
+havaK[1:10,]
+#summary(havaK)
 ```
+
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-#  <kodu tamamla>
+#  
+colnames(havaK)[which(names(havaK) == "Tarih")] <- "Time"
+
+
+colnames(havaK)
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# <kodu tamamla>
+havaK$Time <- as.POSIXct(havaK$Time, format="%Y-%m-%d %H:%M:%S")
+class(havaK$Time)
+
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# <kodu tamamla>
+clean_and_convert <- function(column) {
+  column <- as.numeric(gsub(",", ".", column))
+  return(column)
+}
+
+# 'Time' sütunu dışındaki tüm sütunların isimlerini al
+non_time_columns <- names(havaK)[names(havaK) != "Time"]
+
+# 'Time' sütunu dışındaki tüm sütunlara clean_and_convert fonksiyonunu uygulama
+havaK[, non_time_columns] <- lapply(havaK[, non_time_columns], clean_and_convert)
+# Veriyi gösterme
+print(summary(havaK))
+
 ```
 
-## Egzersiz 3 - Veri Görselleme
-*dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
-
-![](graphic_example.png "İki akslı grafik örneği")
 
 
 ```{r}
+# PM10 ve PM2.5 değerlerini sayısal verilere dönüştürme
 library(dygraphs)
-#  <kodu tamamla>
+
+# PM10 ve PM2.5 değerlerini sayısal verilere dönüştürme
+havaK$`PM10 ( µg/m3 )` <- as.numeric(gsub(",", ".", havaK$`PM10 ( µg/m3 )`))
+havaK$`PM 2.5 ( µg/m3 )` <- as.numeric(gsub(",", ".", havaK$`PM 2.5 ( µg/m3 )`))
+
+# dygraph çizimi
+dygraph(havaK[, c("Time", "PM10 ( µg/m3 )", "PM 2.5 ( µg/m3 )")], main = "PM10 ve PM2.5 Zaman Serisi") %>%
+  dyOptions(drawPoints = TRUE, pointSize = 3) %>%
+  dyAxis("y", label = "PM (µg/m3)") %>%
+  dyLegend(show = "always")
 ```
