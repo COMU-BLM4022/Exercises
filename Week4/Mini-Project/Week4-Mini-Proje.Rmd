@@ -24,7 +24,9 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+library(readxl)
+havaK <- readxl::read_xlsx("Veri Detaylar.xlsx",skip=1)
+print(havaK)
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -33,6 +35,7 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 #  <kodu tamamla>
+colnames(havaK)[] <-"Time"
 ```
 
 
@@ -46,6 +49,16 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 # <kodu tamamla>
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+  # Sayısal olmayan karakterleri ve boşlukları temizle  
+  x <- gsub("[^0-9,]", "", x)
+  # Ondalık ayırıcıları noktaya çevir
+  x <- gsub(",", ".", x)
+  # Sayısal değerlere dönüştür
+  as.numeric(x)
+})
+
+head(havaK, 10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
