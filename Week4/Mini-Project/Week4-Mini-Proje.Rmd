@@ -25,6 +25,10 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
 # havaK <- <kodu tamamla>
+install.packages("readxl")
+library(readxl)
+havaK <- readxl::read_excel("C:\\Users\\bc199\\OneDrive\\Belgeler\\GitHub\\Exercises\\Week4\\veri.xlsx", skip = 1)
+print(head(havaK, 10))
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -33,6 +37,8 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 #  <kodu tamamla>
+colnames(havaK)[1]<-"Time"
+print(havaK)
 ```
 
 
@@ -40,12 +46,21 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 # <kodu tamamla>
+havaK$Time <- as.POSIXct(havaK$Time, format="%Y-%m-%d %H:%M:%S")
+
+class(havaK$Time)
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
 # <kodu tamamla>
+havaK[, 2:8] = sapply(havaK[, 2:8], function(x) {
+  gsub(",", ".", x)
+  
+})
+havaK[, 2:8] = sapply(havaK[, 2:8], as.numeric)
+head(havaK,10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -57,4 +72,16 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 library(dygraphs)
 #  <kodu tamamla>
+library(xts)
+
+havaK_xts <- xts(havaK[, c(2, 3)], order.by=havaK$Time)
+  # Oluşturulan xts nesnesi için dygraph oluşturma
+  dygraph(havaK_xts) %>%
+  #Sırası ile renkler  
+  dyOptions(colors = c("orange", "purple")) %>%
+  #Sol  
+  dyAxis("y", label = "PM 2.5 ( ug/m3 )") %>%
+  #Sağ  
+  dyAxis("y2", label = "SO2 ( ug/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts)[2], axis = 'y2')
 ```
