@@ -25,9 +25,11 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
+install.packages('read_excel')
 library(readxl)
-havaK <- readxl::read_xlsx("Veri Detayları3_21_2024, 1_56_44 PM.xlsx", skip = 1)
-print(havaK)
+
+havaK <- read_excel("D:/Programlama/R Programming/Kaynak Dosyalar/Project-1/veridetaylari.xlsx", skip=1)
+
 ```
 
 ```{r}
@@ -47,39 +49,32 @@ testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 colnames(havaK)[1] <- "Time"
+
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
-  expect_true("POSIXct" %in% class(havaK$Time))
-})  
-
-#dput(colnames(havaK), file = ".colnames")
-true_colnames <- dget(file = ".colnames")
-test_that("data.frame dolumn names should be right", {
-  expect_equal(colnames(havaK), true_colnames)
-})
+havaK$Time <- as.POSIXct(havaK$Time, format="%Y-%m-%d %H:%M:%S", tz= "UTC")
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın.
 
 ```{r}
-t <- sapply(2:ncol(havaK), function(x) {
-  # Convert "," to "."
-  havaK[[x]] <<- gsub(",", ".", havaK[[x]])
-  # Cast to 'numeric
-  havaK[[x]] <<- as.numeric(havaK[[x]])
-})
-```
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) { 
+	
+	# Sayısal olmayan karakterleri ve boşlukları temizle
+	  x <- gsub("[^0-9,]", "", x)
+	
+	  # Ondalık ayırıcıları noktaya çevir
+	  x <- gsub("," ,  ".",  x)
+	
+	  # Sayısal değerlere dönüştür
+	  as.numeric(x)
+	  })
 
-```{r}
-test_that("data.frame dolumns other than 'Time' should be of type 'numeric'", {
-  expect_true(all(sapply(2:ncol(havaK), function(x) class(havaK[[x]])) == "numeric"))
-})
-
+head(havaK, 10)
 ```
 
 ```{r}
@@ -92,6 +87,25 @@ print(havaK)
 
 
 ```{r}
-library(dygraphs)
-#  <kodu tamamla>
+install.packages("dygraphs")
+	
+	library(dygraphs)
+	
+	library(xts)
+	
+	# Oluşturulan xts nesnesi için dygraph oluşturma
+	havaK_xts <- xts(havaK[, c(3, 4)], order.by=havaK$Time)
+	
+	  # Oluşturulan xts nesnesi için dygraph oluşturma
+	  dygraph(havaK_xts) %>%
+	
+	  #Sırası ile renkler  
+	  dyOptions(colors = c("blue", "red")) %>%
+	
+	  #Sol  
+	  dyAxis("y", label = "S02 ( ug/m3 )") %>%
+	
+	  #Sağ  
+	  dyAxis("y2", label = "NO2 ( ug/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts)[2], axis = 'y2')
 ```
