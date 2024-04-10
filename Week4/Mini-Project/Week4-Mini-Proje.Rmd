@@ -79,10 +79,18 @@ fill_na_with_mean <- function(column) {
 }
 colnames(havaK)[5] <- "NO2 ( µg/m3 )"
 colnames(havaK)[7] <- "NO ( µg/m3 )"
+str(havaK_filled_mean)
 
 havaK_filled_mean <- havaK
 havaK_filled_mean[,-1] <- sapply(havaK[,-1], fill_na_with_mean)
-havaK_xts_mean <- xts(havaK_filled_mean[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = na.exclude(havaK_filled_mean$Time))
+
+# Zaman sütunundaki NA değerlerini temizle
+cleaned_time <- havaK_filled_mean$Time[complete.cases(havaK_filled_mean$Time)]
+# Temizlenmiş zaman etiketleriyle veri çerçevesini alt kümeleyin
+cleaned_data <- havaK_filled_mean[complete.cases(havaK_filled_mean$Time), c("Time", "NO ( µg/m3 )", "NO2 ( µg/m3 )")]
+# xts nesnesini oluştur
+havaK_xts_mean <- xts(cleaned_data[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = cleaned_time)
+
 dygraph(havaK_xts_mean, main = "Hava Kalitesi (Mean)") %>%
   dyOptions(colors = c("blue", "red")) %>%
   dyAxis("y", label = "NO ( µg/m3 )") %>%
@@ -91,7 +99,13 @@ dygraph(havaK_xts_mean, main = "Hava Kalitesi (Mean)") %>%
 # NA değerleri interpolation ile doldurup grafik çıkartma
 havaK_filled_inter <- havaK
 havaK_filled_inter[,-1] <- na.approx(havaK[,-1])
-havaK_xts_inter <- xts(havaK_filled_inter[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = havaK_filled_inter$Time)
+
+# 'Time' sütunundaki NA değerlerini temizleyin
+cleaned_data <- na.omit(havaK_filled_inter[, c("Time", "NO ( µg/m3 )", "NO2 ( µg/m3 )")])
+
+# xts nesnesini oluştur
+havaK_xts_inter <- xts(cleaned_data[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = cleaned_data$Time)
+
 dygraph(havaK_xts_inter, main = "Hava Kalitesi (Interpolation)") %>%
   dyOptions(colors = c("blue", "red")) %>%
   dyAxis("y", label = "NO ( µg/m3 )") %>%
