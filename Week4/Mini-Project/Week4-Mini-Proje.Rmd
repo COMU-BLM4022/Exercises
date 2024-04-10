@@ -77,9 +77,12 @@ fill_na_with_mean <- function(column) {
   column[is.na(column)] <- mean(column, na.rm = TRUE)
   return(column)
 }
+colnames(havaK)[5] <- "NO2 ( µg/m3 )"
+colnames(havaK)[7] <- "NO ( µg/m3 )"
+
 havaK_filled_mean <- havaK
 havaK_filled_mean[,-1] <- sapply(havaK[,-1], fill_na_with_mean)
-havaK_xts_mean <- xts(havaK_filled_mean[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = havaK_filled_mean$Time)
+havaK_xts_mean <- xts(havaK_filled_mean[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = na.exclude(havaK_filled_mean$Time))
 dygraph(havaK_xts_mean, main = "Hava Kalitesi (Mean)") %>%
   dyOptions(colors = c("blue", "red")) %>%
   dyAxis("y", label = "NO ( µg/m3 )") %>%
