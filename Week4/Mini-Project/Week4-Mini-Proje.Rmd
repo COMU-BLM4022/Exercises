@@ -30,6 +30,16 @@ havaK <- read_excel("Veri Detayları4_4_2024, 3_12_25 PM.xlsx")
 head(havaK, 10)
 ```
 
+```{r}
+library(testthat)
+testthat::test_that("Global Workspace'de 'havaK' adli bir değişken olmalı", {
+  expect_true(exists("havaK"))
+})
+
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("data.frame" %in% class(havaK))
+})
+```
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
 ### Zaman sütunu
@@ -47,6 +57,16 @@ colnames(havaK)[1] <- "Time"
 havaK$Time <- as.POSIXct(havaK$Time)
 ```
 
+```{r}
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("POSIXct" %in% class(havaK$Time))
+})  
+
+true_colnames <- dput(colnames(havaK), file = ".colnames")
+test_that("data.frame column names should be right", {
+  expect_equal(colnames(havaK), true_colnames)
+})
+```
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
@@ -59,6 +79,12 @@ havaK[,-1] <- sapply(havaK[,-1], function(x) {
 head(havaK, 10)
 ```
 
+```{r}
+test_that("data.frame dolumns other than 'Time' should be of type 'numeric'", {
+  expect_true(all(sapply(2:ncol(havaK), function(x) class(havaK[[x]])) == "numeric"))
+})
+
+```
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
