@@ -23,8 +23,12 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+
+library(readxl)
+
+havaK <- read_excel("Veri Detaylari29.03.2024 21_57_57.xlsx")
+
+print(havaK)
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -32,7 +36,7 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-#  <kodu tamamla>
+colnames(havaK)[1] <- "Time"
 ```
 
 
@@ -45,7 +49,17 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# <kodu tamamla>
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {
+  # Sayısal olmayan karakterleri ve boşlukları temizle  
+  x <- gsub("[^0-9,]", "", x)
+  # Ondalık ayırıcıları noktaya çevir
+  x <- gsub(",", ".", x)
+  # Sayısal değerlere dönüştür
+  as.numeric(x)
+})
+
+head(havaK, 10)
+print(havaK)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -56,5 +70,18 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 library(dygraphs)
-#  <kodu tamamla>
+
+library(xts)
+havaK <- havaK[complete.cases(havaK$Time), ]
+
+havaK_xts <- xts(havaK[, c(2, 3)], order.by=havaK$Time)
+  # Oluşturulan xts nesnesi için dygraph oluşturma
+  dygraph(havaK_xts) %>%
+  #Sırası ile renkler  
+  dyOptions(colors = c("blue", "red")) %>%
+  #Sol  
+  dyAxis("y", label = "PM 2.5 ( ug/m3 )") %>%
+  #Sağ  
+  dyAxis("y2", label = "SO2 ( ug/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts)[2], axis = 'y2')
 ```
