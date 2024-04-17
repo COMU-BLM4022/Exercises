@@ -25,14 +25,28 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
 # havaK <- <kodu tamamla>
+library(readxl)
+havaK <- read_excel("Veri Detayları4_4_2024, 3_12_25 PM.xlsx")
+head(havaK, 10)
 ```
 
+```{r}
+library(testthat)
+testthat::test_that("Global Workspace'de 'havaK' adli bir değişken olmalı", {
+  expect_true(exists("havaK"))
+})
+
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("data.frame" %in% class(havaK))
+})
+```
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 #  <kodu tamamla>
+colnames(havaK)[1] <- "Time"
 ```
 
 
@@ -40,14 +54,37 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 # <kodu tamamla>
+havaK$Time <- as.POSIXct(havaK$Time)
 ```
 
+```{r}
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("POSIXct" %in% class(havaK$Time))
+})  
+
+true_colnames <- dput(colnames(havaK), file = ".colnames")
+test_that("data.frame column names should be right", {
+  expect_equal(colnames(havaK), true_colnames)
+})
+```
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
 # <kodu tamamla>
+havaK[,-1] <- sapply(havaK[,-1], function(x) {
+  x <- gsub("[^0-9,]", "", x)
+  x <- gsub(",", ".", x)
+  as.numeric(x)
+})
+head(havaK, 10)
 ```
 
+```{r}
+test_that("data.frame dolumns other than 'Time' should be of type 'numeric'", {
+  expect_true(all(sapply(2:ncol(havaK), function(x) class(havaK[[x]])) == "numeric"))
+})
+
+```
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
@@ -55,6 +92,49 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 
 ```{r}
+# <kodu tamamla>
 library(dygraphs)
-#  <kodu tamamla>
+# NA değerleri mean ile doldurup grafik çıkartma
+library(dygraphs)
+library(utf8)
+library(zoo)
+library(xts)
+fill_na_with_mean <- function(column) {
+  column[is.na(column)] <- mean(column, na.rm = TRUE)
+  return(column)
+}
+colnames(havaK)[5] <- "NO2 ( µg/m3 )"
+colnames(havaK)[7] <- "NO ( µg/m3 )"
+str(havaK_filled_mean)
+
+havaK_filled_mean <- havaK
+havaK_filled_mean[,-1] <- sapply(havaK[,-1], fill_na_with_mean)
+
+# Zaman sütunundaki NA değerlerini temizle
+cleaned_time <- havaK_filled_mean$Time[complete.cases(havaK_filled_mean$Time)]
+# Temizlenmiş zaman etiketleriyle veri çerçevesini alt kümeleyin
+cleaned_data <- havaK_filled_mean[complete.cases(havaK_filled_mean$Time), c("Time", "NO ( µg/m3 )", "NO2 ( µg/m3 )")]
+# xts nesnesini oluştur
+havaK_xts_mean <- xts(cleaned_data[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = cleaned_time)
+
+dygraph(havaK_xts_mean, main = "Hava Kalitesi (Mean)") %>%
+  dyOptions(colors = c("blue", "red")) %>%
+  dyAxis("y", label = "NO ( µg/m3 )") %>%
+  dyAxis("y2", label = "NO2 ( µg/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts_mean)[2], axis = 'y2')
+# NA değerleri interpolation ile doldurup grafik çıkartma
+havaK_filled_inter <- havaK
+havaK_filled_inter[,-1] <- na.approx(havaK[,-1])
+
+# 'Time' sütunundaki NA değerlerini temizleyin
+cleaned_data <- na.omit(havaK_filled_inter[, c("Time", "NO ( µg/m3 )", "NO2 ( µg/m3 )")])
+
+# xts nesnesini oluştur
+havaK_xts_inter <- xts(cleaned_data[, c("NO ( µg/m3 )", "NO2 ( µg/m3 )")], order.by = cleaned_data$Time)
+
+dygraph(havaK_xts_inter, main = "Hava Kalitesi (Interpolation)") %>%
+  dyOptions(colors = c("blue", "red")) %>%
+  dyAxis("y", label = "NO ( µg/m3 )") %>%
+  dyAxis("y2", label = "NO2 ( µg/m3 )", independentTicks = TRUE) %>%
+  dySeries(names(havaK_xts_inter)[2], axis = 'y2')
 ```
