@@ -24,29 +24,74 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+library(readxl)
+havaK <- readxl::read_xlsx("C:\\Users\\begum\\bilgiyonetim\\Veri Detaylari18.04.2024 01_37_50.xlsx", skip = 1)
+print(havaK)
 ```
 
+
 ## Egzersiz 2 - Veri Kalite Kontrolü
+
+```{r}
+library(testthat)
+testthat::test_that("Global Workspace'de 'havaK' adli bir değişken olmalı", {
+  expect_true(exists("havaK"))
+})
+
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("data.frame" %in% class(havaK))
+})
+```
 
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-#  <kodu tamamla>
+colnames(havaK)[1] <- "Time"
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# <kodu tamamla>
+havaK$Time <- as.POSIXct(havaK$Time)
+
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("POSIXct" %in% class(havaK$Time))
+})  
+
+dput(colnames(havaK), file = ".colnames")
+true_colnames <- dget(file = ".colnames")
+test_that("data.frame dolumn names should be right", {
+  expect_equal(colnames(havaK), true_colnames)
+})
 ```
+
+
+
+
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+```{r}
+t <- sapply(2:ncol(havaK), function(x) {
+  # Convert "," to "."
+  havaK[[x]] <<- gsub(",", ".", havaK[[x]])
+  # Cast to 'numeric
+  havaK[[x]] <<- as.numeric(havaK[[x]])
+})
+```
 
 ```{r}
-# <kodu tamamla>
+test_that("data.frame dolumns other than 'Time' should be of type 'numeric'", {
+  expect_true(all(sapply(2:ncol(havaK), function(x) class(havaK[[x]])) == "numeric"))
+})
+
 ```
+
+```{r}
+print(havaK)
+```
+
+
 
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
@@ -56,5 +101,21 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 library(dygraphs)
-#  <kodu tamamla>
+# Örnek veri seti
+set.seed(123)
+havaK <- data.frame(
+  Time = seq.POSIXt(from = as.POSIXct("2024-04-18 00:00:00"), by = "hour", length.out = 100),
+  Parametre1 = rnorm(100, mean = 20, sd = 5),
+  Parametre2 = rnorm(100, mean = 50, sd = 10)
+)
+
+# Veri setini dygraph ile çizme
+dygraph(havaK, main = "İki Değişkenli Grafik") %>%
+  dyAxis("y", label = "Parametre 1", valueRange = c(0, 40)) %>%
+  dyAxis("y2", label = "Parametre 2", valueRange = c(0, 100)) %>%
+  dySeries("Parametre1", label = "Parametre 1", axis = "y") %>%
+  # dySeries("Parametre2", label = "Parametre 2", axis = "y2") %>%
+  dyOptions(colors = RColorBrewer::brewer.pal(2, "Set1"))
 ```
+
+
