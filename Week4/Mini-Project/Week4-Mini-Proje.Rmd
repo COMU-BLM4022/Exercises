@@ -23,8 +23,20 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+library(readxl)
+havaK <- readxl::read_xlsx("C:\\Users\\barkin\\Desktop\\BYS\\tablo1havakalitesi\\Veri Detaylari18.04.2024 02_28_54.xlsx", skip = 1)
+havaK
+```
+
+```{r}
+library(testthat)
+testthat::test_that("Global Workspace'de 'havaK' adli bir değişken olmalı", {
+  expect_true(exists("havaK"))
+})
+
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("data.frame" %in% class(havaK))
+})
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -32,22 +44,51 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ### Zaman sütunu
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
-#  <kodu tamamla>
+colnames(havaK)[1] <- "Time"
+colnames(havaK)[2] <- "PM10 ( <U+00B5>g/m3 )"
+colnames(havaK)[3] <- "SO2 ( <U+00B5>g/m3 )"
+colnames(havaK)[4] <- "NO2 ( <U+00B5>g/m3 )"
+colnames(havaK)[5] <- "NOX ( <U+00B5>g/m3 )"
+colnames(havaK)[6] <- "NO ( <U+00B5>g/m3 )"
+colnames(havaK)[7] <- "O3 ( <U+00B5>g/m3 )"
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# <kodu tamamla>
+testthat::test_that("'havaK' adli değişkenin tipi 'data.frame' olmalı", {
+  expect_true("POSIXct" %in% class(havaK$Time))
+})  
+
+dput(colnames(havaK), file = ".colnames")
+true_colnames <- dget(file = ".colnames")
+test_that("data.frame dolumn names should be right", {
+  expect_equal(colnames(havaK), true_colnames)
+})
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# <kodu tamamla>
+t <- sapply(2:ncol(havaK), function(x) {
+  # Convert "," to "."
+  havaK[[x]] <<- gsub(",", ".", havaK[[x]])
+  # Cast to 'numeric
+  havaK[[x]] <<- as.numeric(havaK[[x]])
+})
 ```
 
+```{r}
+test_that("data.frame dolumns other than 'Time' should be of type 'numeric'", {
+  expect_true(all(sapply(2:ncol(havaK), function(x) class(havaK[[x]])) == "numeric"))
+})
+
+```
+
+```{r}
+havaK
+```
 ## Egzersiz 3 - Veri Görselleme
 *dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
@@ -56,5 +97,11 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 library(dygraphs)
-#  <kodu tamamla>
+dygraph(havaK, x = "ZamanSutunu", main = "Hava Kalitesi Verileri") %>%
+  dySeries("PM10 ( <U+00B5>g/m3 )", label = "PM10") %>%
+  dySeries("SO2 ( <U+00B5>g/m3 )", label = "SO2") %>%
+  dySeries("NO2 ( <U+00B5>g/m3 )", label = "NO2") %>%
+  dySeries("NOX ( <U+00B5>g/m3 )", label = "NOX") %>%
+  dySeries("NO ( <U+00B5>g/m3 )", label = "NO") %>%
+  dySeries("O3 ( <U+00B5>g/m3 )", label = "O3")
 ```
