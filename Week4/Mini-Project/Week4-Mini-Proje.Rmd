@@ -24,28 +24,55 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+library(readxl)
+havaK <- readxl::read_xlsx("datasets/10.04.2024 02_17_50.xlsx", skip = 1")
+print(havaK)
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
-### Zaman sütunu
-Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
+
 ```{r}
-#  <kodu tamamla>
+library(testthat)
+testthat::test_that("there should be a variable called havaK", {
+  expect_true(exists("havaK"))
+})
+
+testthat::test_that("its type should be data.frame", {
+  expect_true("data.frame" %in% class(havaK))
+})
 ```
 
 
 *havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# <kodu tamamla>
+colnames(havaK)[1] <- "Time"
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
-# <kodu tamamla>
+havaK$Time <- as.POSIXct(havaK$Time)
+
+testthat::test_that("its type should be calendar alike type posixct", {
+  expect_true("POSIXct" %in% class(havaK$Time))
+})
+
+dput(colnames(havaK), file = ".colnames")
+manipulatedColnames <- dget(file = ".colnames")
+test_that("column names should be just expected", {
+  expect_equal(colnames(havaK), true_colnames)  
+})
+
+
+time <- sapply(2:ncol(havaK), function(x) {
+  # Convert "," to "."
+  havaK[[x]] <<- gsub(",", ".", havaK[[x]])
+  # Cast to 'numeric
+  havaK[[x]] <<- as.numeric(havaK[[x]])
+})
+
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -56,5 +83,19 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 library(dygraphs)
-#  <kodu tamamla>
+
+set.seed(123)
+
+havaK <- data.frame(
+  time = seq.POSIXt(from = as.POSIXct("2024-04-18 00:00:00"), by = "hour", length.out = 100),
+  param1 = rnorm(100, mean = 20, sd = 5),
+  param2 = rnorm(100, mean = 50, sd = 10)
+)
+
+dygraph(havaK, main = "Two Variable Graph") %>%
+  dyAxis("y", label = "param1", valueRange = c(0, 40)) %>%
+  dyAxis("y2", label = "param2", valueRange = c(0, 100)) %>%
+  dySeries("param1", label = "param1", axis = "y") %>%
+  # dySeries("param2", label = "param2", axis = "y2") %>%
+  dyOptions(colors = RColorBrewer::brewer.pal(2, "Set1"))
 ```
