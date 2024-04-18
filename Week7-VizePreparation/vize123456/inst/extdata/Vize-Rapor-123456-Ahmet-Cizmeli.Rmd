@@ -6,42 +6,55 @@ output:
 ---
 
 
-## Q1 İş, problem ve ihtiyaç tanımı
+### İş Tanımı:
+araba satın almak isteyen müşterilerin arabaları karşılaştırıp arabayı ona göre almaları
 
-### Problem ve ihtiyaç
+### Problem ve İhtiyaç:
+İnsanların taşınma sürecinde hangi arabayı seçecekleri konusunda kararsızlık yaşamaları ve bu süreci kolaylaştırmak için veriye dayalı bir analize ihtiyaç duymaları.
 
-### Çözüm önerisi - Veri Seti tanımı
-Bulduğunuz ve kullanacağınız veri setini ve kullanacağınız parametreleri kısaca anlatın.
-
-### Çözüm önerisi - Planlanan analiz (özet)
-Yapmayı planladığınız analizi kısaca anlatın.
-
-### Çözüm önerisi - Planlanan analiz sonuçları
-Hesaplanacak KPI'lar ya da bulmayı planladığınız rapor sonuçlarını analiz öncesinde burada kısaca anlatın.
+### Çözüm Önerisi - Veri Seti Tanımı:
+r da arabaların verilerini hazır bulunan mtcars
 
 
 ## Q2 - Veri İthali
 ```{r}
-#SQLite veritabanını yaratan kodlar 
-
-#vize123456::create_sqlite_db()
+library(vize123456)
+cars<-data("mtcars")
 ```
 
 ## Q3 - Veri Kalite Kontrolü
 ```{r}
-# data <- vize123456::retrieve_dbdata()
-# data <- #vize123456::data_preprocessing()
-# vize123456::write_data_to_db(data)
+# Eksik değerleri kontrol et
+any_na <- anyNA(cars)
+if (any_na) {
+  cars <- na.omit(cars)
+  cat("Eksik değerleri silindi.\n")
+} else {
+  cat("Eksik değer bulunamadı.\n")
+}
+
+# Aykırı değerleri temizle (IQR yöntemi)
+remove_outliers <- function(x) {
+  q1 <- quantile(x, 0.25)
+  q3 <- quantile(x, 0.75)
+  iqr <- q3 - q1
+  lower_bound <- q1 - 1.5 * iqr
+  upper_bound <- q3 + 1.5 * iqr
+  x <- ifelse(x < lower_bound, NA, ifelse(x > upper_bound, NA, x))
+  return(x)
+}
+
+# Aykırı değerleri temizleme işlemi
+outlier_removed_mtcars <- as.data.frame(lapply(mtcars, remove_outliers))
+
 ```
 
 ## Q4 Veri analizi
 ```{r}
-# kpi <- vize123456::data_analysis(data)
-# ya da 
-# ara_tablo <- vize123456::data_analysis(data)
-# kpi <- vize123456::data_analysis(ara_tablo)
-# vize123456::make_graphic(ara_tablo)
+plot(outlier_removed_mtcars$wt, outlier_removed_mtcars$mpg, main = "Araba Ağırlığı ve Yakıt Verimliliği",
+     xlab = "Ağırlık (1000 lbs)", ylab = "Yakıt Verimliliği (mpg)",
+     pch = 19, col = "blue")
 ```
 
 ## Q5 : Sonuçlar ve değerlendirmeler
-
+müşteriler grafiğe bakarak istedikleri arabayı seçecekler
