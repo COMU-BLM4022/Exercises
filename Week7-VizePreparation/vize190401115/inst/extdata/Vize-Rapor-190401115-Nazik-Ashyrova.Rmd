@@ -1,0 +1,91 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Q1 İş, problem ve ihtiyaç tanımı
+
+New York'taki Queens bölgesindeki hava kalitesini ölçmek ,hava kirliliğini analizini yapmak istiyorum, grafiğini çizdirip uç değerlerin ne zaman olduğunu görmek istiyorum
+
+### Problem ve ihtiyaç
+
+bu değerleri bir arada görebileceğim veri setine ihtiyaçımız var
+
+### Çözüm önerisi - Veri Seti tanımı
+
+R kütüphanesinden airquality verilerini kullanıcağım
+
+### Çözüm önerisi - Planlanan analiz (özet)
+
+### Çözüm önerisi - Planlanan analiz sonuçları
+
+Hesaplanacak KPI'lar ya da bulmayı planladığınız rapor sonuçlarını analiz öncesinde burada kısaca anlatın.
+
+## Q2 - Veri İthali
+
+```{r}
+data(airquality)
+print(airquality)
+```
+
+## Q3 - Veri Kalite Kontrolü
+
+```{r}
+# data <- vize123456::retrieve_dbdata()
+# data <- #vize123456::data_preprocessing()
+# vize123456::write_data_to_db(data)
+
+# Eksik değerleri silme
+clean_airquality <- na.omit(airquality)
+library(testthat)
+
+# Birim testi tanımı
+library(testthat)
+
+test_that("No Missing Values in airquality Data", {
+  # airquality veri setindeki eksik değerleri kontrol et
+  expect_false(any(is.na(clean_airquality)), 
+               info = "There are missing values in the airquality data.")
+})
+
+```
+
+## Q4 Veri analizi
+
+```{r}
+# kpi <- vize123456::data_analysis(data)
+# ya da 
+# ara_tablo <- vize123456::data_analysis(data)
+# kpi <- vize123456::data_analysis(ara_tablo)
+# vize123456::make_graphic(ara_tablo)
+# KPI hesaplama
+ortalama_ozone <- mean(clean_airquality$Ozone, na.rm = TRUE)
+ortalama_wind <- mean(clean_airquality$Wind, na.rm = TRUE)
+
+# Ara tablo oluşturma
+aratablo <- aggregate(clean_airquality[, c("Ozone", "Wind")], by = list(Month = cut(clean_airquality$Month, breaks = 5)), FUN = mean, na.rm = TRUE)
+
+# Model oluşturma
+model <- lm(Ozone ~ Wind, data = clean_airquality)
+
+# Model özetini görüntüleme
+summary(model)
+library(ggplot2)
+
+grafik <- ggplot(data = clean_airquality, aes(x = Day)) +
+  geom_line(aes(y = Ozone, color = "Ozone")) +
+  geom_line(aes(y = Solar.R, color = "Solar.R")) +
+  geom_line(aes(y = Wind, color = "Wind")) +
+  geom_line(aes(y = Temp, color = "Temp")) +
+  geom_line(aes(y = Month, color = "Month")) +
+  geom_line(aes(y = Day, color = "Day")) +
+  labs(x = "Day", y = "Values", color = "Variables") +
+  scale_color_manual(values = c("Ozone" = "red", "Solar.R" = "blue", "Wind" = "green", "Temp" = "orange", "Month" = "purple", "Day" = "black"))
+
+# Grafik görüntüleme
+print(grafik)
+```
+
+## Q5 : Sonuçlar ve değerlendirmeler
