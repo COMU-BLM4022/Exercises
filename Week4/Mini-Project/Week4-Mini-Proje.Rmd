@@ -25,6 +25,10 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
 # havaK <- <kodu tamamla>
+install.packages("readxl")
+library(readxl)
+havaK <- readxl::read_xlsx("HavaParametreleri.xlsx")
+print(havaK)
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
@@ -33,6 +37,7 @@ Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişk
 Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 ```{r}
 #  <kodu tamamla>
+colnames(havaK)[which(colnames(havaK) == "Tarih")] <- "Time"
 ```
 
 
@@ -40,12 +45,23 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 ```{r}
 # <kodu tamamla>
+havaK$Time <- as.POSIXct(havaK$Time)
 ```
 
 *Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
 
 ```{r}
 # <kodu tamamla>
+havaK[-which(names(havaK) == "Time")] <- lapply(havaK[-which(names(havaK) == "Time")], function(x) {  
+# Sayısal olmayan karakterleri ve boşlukları temizle    
+x <- gsub("[^0-9,]", "", x)  
+# Ondalık ayırıcıları noktaya çevir  
+#- olanları boş yapalım ki NA çevrilsin    
+x <- gsub("-", "", x)  
+x <- gsub(",", ".", x)  
+# Sayısal değerlere dönüştür  
+as.numeric(x)})
+head(havaK, 10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
@@ -55,6 +71,14 @@ Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
 
 
 ```{r}
+install.packages("dygraphs")
 library(dygraphs)
 #  <kodu tamamla>
+data_subset <- havaK[, c("Time", "PM10", "CO")]
+dygraph(data_subset) %>%
+  dyAxis("y", "PM10", label = "PM10") %>%
+  dyAxis("y", "CO", label = "CO", independentTicks = TRUE) %>%
+  dySeries("PM10", label = "PM10") %>%
+  dySeries("CO", label = "CO") %>%
+  dyRangeSelector()  
 ```
